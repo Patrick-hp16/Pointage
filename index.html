@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pointage des Travailleurs</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Pointage des travailleurs
+        
+    </header>
+
+    <main>
+        <section class="pointage-form">
+            <h2>Enregistrer le pointage</h2>
+            <form id="pointageForm">
+                <input type="text" id="nom" placeholder="Nom du travailleur" required>
+                <select id="action" required>
+                    <option value="Entrée">Entrée</option>
+                    <option value="Sortie">Sortie</option>
+                </select>
+                <button type="submit">Enregistrer</button>
+            </form>
+        </section>
+
+        <section class="historique">
+            <h2>Historique des pointages</h2>
+            <ul id="historiqueList"></ul>
+      <ul id="historiqueList"></ul>
+      <button id="clearHistory">Effacer l'historique</button>
+      </section>
+        
+        
+    </main>
+</body>
+</html>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("pointageForm");
+    const historiqueList = document.getElementById("historiqueList");
+    const clearHistoryBtn = document.getElementById("clearHistory");
+
+    // Charger les pointages existants
+    let pointages = JSON.parse(localStorage.getItem("pointages")) || [];
+
+    function afficherPointages() {
+        historiqueList.innerHTML = "";
+        pointages.forEach((pointage, index) => {
+            const li = document.createElement("li");
+            li.textContent = `${pointage.nom} - ${pointage.action} - ${pointage.date}`;
+            historiqueList.appendChild(li);
+        });
+    }
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const nom = document.getElementById("nom").value.trim();
+        const action = document.getElementById("action").value;
+        const date = new Date().toLocaleString();
+
+        if(nom) {
+            const nouveauPointage = { nom, action, date };
+            pointages.push(nouveauPointage);
+            localStorage.setItem("pointages", JSON.stringify(pointages));
+            afficherPointages();
+            form.reset();
+        } else{
+            alert("Veuillez entrer un nom.");
+        }
+    });
+
+    // Ajouter l'événement pour effacer l'historique
+    clearHistoryBtn.addEventListener("click", function () {
+        if (confirm("Êtes-vous sûr de vouloir effacer tout l'historique ?")) {
+            localStorage.removeItem("pointages"); // Supprime les données du stockage local
+            pointages = []; // Réinitialise le tableau
+            afficherPointages(); // Met à jour l'affichage
+        }
+    });
+
+    afficherPointages();
+});
+
+
+</script>
+
+<style>
+
+/* Styles généraux */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f8f9fa;
+}
+
+header {
+    background-color: #007BFF;
+    color: white;
+    padding: 20px 0;
+}
+
+main {
+    padding: 20px;
+}
+
+h2 {
+    color: #333;
+}
+
+/* Formulaire */
+.pointage-form {
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    max-width: 400px;
+    margin: auto;
+}
+
+input, select, button {
+    margin: 10px 0;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Historique */
+.historique {
+    margin-top: 30px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    background: white;
+    padding: 10px;
+    margin: 5px auto;
+    max-width: 400px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+</style>
